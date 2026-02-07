@@ -1,35 +1,32 @@
 <?php
-// Clase que hereda de PDO y que instancia la conexión a la BD con PDO
-// Utiliza el patrón Singleton para que en la aplicación web únicamente
-// existe una instancia de dicha conexión a la BD
-class SPDO extiende PDO
+// Clase que hereda de PDO y utiliza el patrón Singleton
+class SPDO extends PDO
 {
-    // Atributo que es la referencia a la instancia del objeto PDO con la conexión
-    privado estático $instancia = nulo;
+    // Atributo para la instancia única
+    private static $instancia = null;
 
-    // Constructor que obtiene la configuración de las variables de entorno de Railway
-    público función __construir()
+    // Constructor que captura las variables de entorno de Railway
+    public function __construct()
     {
-        // En Railway, usamos getenv() para leer las variables que configuramos en el panel
-        $host = obtenerenv('MYSQLHOST');
-        $db   = obtenerenv('MYSQLDATABASE');
-        $user = obtenerenv('MYSQLUSER');
-        $pass = obtenerenv('MYSQLPASSWORD');
-        $port = obtenerenv('MYSQLPORT');
+        $host = getenv('MYSQLHOST');
+        $db   = getenv('MYSQLDATABASE');
+        $user = getenv('MYSQLUSER');
+        $pass = getenv('MYSQLPASSWORD');
+        $port = getenv('MYSQLPORT');
 
-        // Nota técnica: En el DSN de PDO para MySQL se usa 'dbname', no 'nombredb'
+        // DSN corregido con 'dbname'
         $dsn = "mysql:host={$host};port={$port};dbname={$db};charset=utf8";
 
-        padre::__construir($dsn, $user, $pass);
+        parent::__construct($dsn, $user, $pass);
     }
 
-    // Método estático para el patrón Singleton que devuelve la instancia de SPDO
-    público estático función singleton()
+    // Método Singleton para obtener la instancia
+    public static function singleton()
     {
-        si (mismo::$instancia == nulo) {
-            mismo::$instancia = nuevo mismo();
+        if (self::$instancia == null) {
+            self::$instancia = new self();
         }
-        regresar mismo::$instancia;
+        return self::$instancia;
     }
 }
 ?>
