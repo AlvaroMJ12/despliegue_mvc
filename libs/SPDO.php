@@ -5,21 +5,20 @@ class SPDO extends PDO
     // Atributo para la instancia única
     private static $instancia = null;
 
-    // Constructor que captura las variables de entorno de Railway
     public function __construct()
-    {
-        $host = getenv('MYSQLHOST');
-        $db   = getenv('MYSQLDATABASE');
-        $user = getenv('MYSQLUSER');
-        $pass = getenv('MYSQLPASSWORD');
-        $port = getenv('MYSQLPORT');
+{
+    // Usamos $_ENV para asegurar que Railway nos pase los datos
+    $host = $_ENV['MYSQLHOST'] ?? 'error';
+    $db   = $_ENV['MYSQLDATABASE'] ?? 'error';
+    $user = $_ENV['MYSQLUSER'] ?? 'error';
+    $pass = $_ENV['MYSQLPASSWORD'] ?? 'error';
+    $port = $_ENV['MYSQLPORT'] ?? '3306';
 
-        // DSN corregido con 'dbname'
-        $dsn = "mysql:host={$host};port={$port};dbname={$db};charset=utf8";
+    // DSN corregido
+    $dsn = "mysql:host={$host};port={$port};dbname={$db};charset=utf8";
 
-        parent::__construct($dsn, $user, $pass);
-    }
-
+    parent::__construct($dsn, $user, $pass);
+}
     // Método Singleton para obtener la instancia
     public static function singleton()
     {
@@ -30,3 +29,4 @@ class SPDO extends PDO
     }
 }
 ?>
+
