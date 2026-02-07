@@ -7,22 +7,21 @@ class SPDO extends PDO
 
    public function __construct()
 {
-    // getenv() es más compatible con la configuración de Railway
+    // Usamos getenv() que es mucho más fiable en entornos cloud
     $host = getenv('MYSQLHOST');
     $db   = getenv('MYSQLDATABASE');
     $user = getenv('MYSQLUSER');
     $pass = getenv('MYSQLPASSWORD');
     $port = getenv('MYSQLPORT') ?: '3306';
 
-    // Si getenv falla, intentamos con $_SERVER como plan B
-    if (!$host) {
-        $host = $_SERVER['MYSQLHOST'] ?? 'localhost';
-        $db   = $_SERVER['MYSQLDATABASE'] ?? '';
-        $user = $_SERVER['MYSQLUSER'] ?? '';
-        $pass = $_SERVER['MYSQLPASSWORD'] ?? '';
+    // Si las variables no llegan, lanzamos un error que nos explique qué falta
+    if (!$host || !$db || !$user) {
+        throw new Exception("Error crítico: Las variables de entorno de Railway no se detectan.");
     }
 
     $dsn = "mysql:host={$host};port={$port};dbname={$db};charset=utf8";
+
+    // Llamamos al constructor del padre (PDO)
     parent::__construct($dsn, $user, $pass);
 }
     // Método Singleton para obtener la instancia
@@ -35,5 +34,6 @@ class SPDO extends PDO
     }
 }
 ?>
+
 
 
